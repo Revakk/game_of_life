@@ -12,9 +12,11 @@ bool state_in_bounds(const std::pair<int, int>& _state, size_t _max_width, size_
 		_state.second < _max_height
 		&&
 		_state.second > 0) {
+		std::cout << "State is in bounds" << '\n';
 		return true;
 	}
 	else {
+		std::cout << "State is not in bounds" << '\n';
 		return false;
 	}
 }
@@ -25,6 +27,7 @@ cell_state state_from_neighbours_count(int _num_alive_neighbours,bool _is_alive)
 	{
 		if (_num_alive_neighbours < 2 || _num_alive_neighbours > 3)
 		{
+			std::cout << "CELL DIED" << '\n';
 			return cell_state::DEAD;
 		}
 		else {
@@ -60,17 +63,26 @@ int check_neighbours(Cell _cell, T& _world, std::vector<Cell>& _neighbouring_cel
 	auto [w, h, ps] = _world.get_bounds();
 
 	int living_neighbours_count = 0;
+	std::cout << "Checking states for cell: " << _cell.x << ',' << _cell.y << '\n';
 	for (const auto& state : states) {
 		std::pair<int, int> current_state{ _cell.x + state.first, _cell.y + state.second };//std::make_pair<int,int>(_cell.x + state.first, _cell.y + state.second);
+
+		
+		std::cout << current_state.first << ',' << current_state.second << '\n';
+
 		if (state_in_bounds(current_state, w, h)) {
 			if (_world.cells.at(current_state.first).at(current_state.second).is_alive)
 			{
 				living_neighbours_count++;
-				std::cout << "state: " << current_state.first << ',' << current_state.second << '\n';
+				std::cout << "This neigbour is alive" << '\n';
 			}
 			else
 			{
-				_neighbouring_cells.push_back(Cell(current_state.first, current_state.second,false));
+				if (_cell.is_alive)
+				{
+					_neighbouring_cells.emplace_back(std::move(Cell(current_state.first, current_state.second, false)));
+					std::cout << "This neigbour is NOT alive" << '\n';
+				}	
 			}
 		}
 	}
@@ -87,7 +99,7 @@ void update(T& _world,std::vector<Cell>& _vec) {
 	std::vector<Cell> cells_to_change{};
 	std::vector<Cell> neighbouring_cells{};
 
-	neighbouring_cells.reserve(_vec.size() * 8);
+	//neighbouring_cells.reserve(_vec.size() * 8);
 	next_iter_check.reserve(_vec.size());
 	cells_to_change.reserve(_vec.size());
 	
@@ -137,8 +149,3 @@ void update(T& _world,std::vector<Cell>& _vec) {
 	_vec = next_iter_check;
 
 }
-
-
-
-
-
