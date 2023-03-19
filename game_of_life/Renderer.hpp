@@ -22,7 +22,7 @@ void render(T& _render_target,sf::RenderWindow& _window)
 			sf::RectangleShape rectangle(sf::Vector2f(9, 9));
 			rectangle.setPosition(sf::Vector2f((o_map_id * 10), (i_map_id * 10)));
 			rectangle.setOutlineThickness(1.0f);
-			rectangle.setOutlineColor(sf::Color::Black);
+			rectangle.setOutlineColor(sf::Color::Color(127,127,127,255));
 			//std::cout << rectangle.getPosition().x << ',' << rectangle.getPosition().y << '\n';
 
 			if (cell.is_alive)

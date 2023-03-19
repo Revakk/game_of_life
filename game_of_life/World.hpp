@@ -50,7 +50,32 @@ std::vector<Cell> World<Cell>::initialize_cells() {
 				alive_cells.emplace_back(Cell(x, y, true));
 				inner_map[y] = Cell(x, y, true);
 			}
-			else if (x == 10 && y == 13)
+			else if (x == 11 && y == 11)
+			{
+				alive_cells.emplace_back(Cell(x, y, true));
+				inner_map[y] = Cell(x, y, true);
+			}
+			else if (x == 11 && y == 12)
+			{
+				alive_cells.emplace_back(Cell(x, y, true));
+				inner_map[y] = Cell(x, y, true);
+			}
+			else if (x == 12 && y == 13)
+			{
+				alive_cells.emplace_back(Cell(x, y, true));
+				inner_map[y] = Cell(x, y, true);
+			}
+			else if (x == 12 && y == 14)
+			{
+				alive_cells.emplace_back(Cell(x, y, true));
+				inner_map[y] = Cell(x, y, true);
+			}
+			else if (x == 13 && y == 13)
+			{
+				alive_cells.emplace_back(Cell(x, y, true));
+				inner_map[y] = Cell(x, y, true);
+			}
+			else if (x == 13 && y == 14)
 			{
 				alive_cells.emplace_back(Cell(x, y, true));
 				inner_map[y] = Cell(x, y, true);
