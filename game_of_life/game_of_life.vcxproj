@@ -131,12 +131,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="GUI.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Button.hpp" />
     <ClInclude Include="Cell.hpp" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="Gol.hpp" />
+    <ClInclude Include="GUI.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>

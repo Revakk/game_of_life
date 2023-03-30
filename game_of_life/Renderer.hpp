@@ -7,6 +7,7 @@
 #include <map>
 #include <assert.h>
 #include <iostream>
+#include "GUI.hpp"
 
 template<typename T>
 void render(T& _render_target,sf::RenderWindow& _window)
@@ -34,4 +35,9 @@ void render(T& _render_target,sf::RenderWindow& _window)
 			//_window.display();
 		}
 	}
+}
+
+void render_ui(GUI _gui)
+{
+
 }
