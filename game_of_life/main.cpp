@@ -1,5 +1,7 @@
 #include "Common.hpp"
 #include <thread>
+#include "GUI.hpp"
+#include "Button.hpp"
 
 int main()
 {
@@ -9,7 +11,13 @@ int main()
 	auto custom_width = world.world_size.width * world.world_size.pixel_size + 200;
 	auto custom_height = world.world_size.height * world.world_size.pixel_size + 200;
 
+	
+
+
 	sf::RenderWindow window(sf::VideoMode(custom_width, custom_height), "Game of lajf");
+	GUI gui(&window);
+
+	gui.add_drawable(Button("label",sf::Vector2f(200,200), sf::Vector2f(100,10)));
 
 	while (window.isOpen())
 	{
@@ -23,6 +31,7 @@ int main()
 		update(world, alive_cells);
 		
 		render(world,window);
+		gui.draw_gui();
 		
 		
 		window.display();
