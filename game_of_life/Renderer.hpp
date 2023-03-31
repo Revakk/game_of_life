@@ -29,15 +29,10 @@ void render(T& _render_target,sf::RenderWindow& _window)
 			if (cell.is_alive)
 			{
 				rectangle.setFillColor(sf::Color::Black);
-				std::cout << "alive cell" << '\n';
+				//std::cout << "alive cell" << '\n';
 			}
 			_window.draw(rectangle);
 			//_window.display();
 		}
 	}
-}
-
-void render_ui(GUI _gui)
-{
-
 }
