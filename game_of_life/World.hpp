@@ -1,6 +1,26 @@
 #pragma once
 #include <map>
 
+struct mouse_world_event
+{
+	sf::Vector2f last_pos;
+	bool left_click;
+	bool right_click;
+};
+
+void update_mouse_event(mouse_world_event& _last_event,sf::Event& _current_mouse_event)
+{
+	if (sf::Event::MouseMoved == _current_mouse_event.type)
+	{
+		_last_event.last_pos.x = _current_mouse_event.mouseMove.x;
+		_last_event.last_pos.y = _current_mouse_event.mouseMove.y;
+	}
+	if (sf::Event::MouseButtonPressed == _current_mouse_event.type)
+	{
+		//switch(_current_mouse_event.mouseButton)
+	}
+}
+
 struct WorldSize {
 	size_t width;
 	size_t height;
@@ -15,6 +35,7 @@ struct World {
 
 	auto get_bounds();
 	std::vector<Cell> initialize_cells();
+	void modify_world(std::vector<Cell>& _world,sf::Event& _event);
 };
 
 template<typename Cell>
@@ -97,4 +118,48 @@ std::vector<Cell> World<Cell>::initialize_cells() {
 	cells = outer_map;
 
 	return alive_cells;
+}
+
+sf::Vector2i find_corresponding_cell(sf::Vector2f& _mouse_input_pos,size_t _cell_size_in_px)
+{
+	int x = _mouse_input_pos.x / _cell_size_in_px;
+	int y = _mouse_input_pos.y / _cell_size_in_px;
+
+	return sf::Vector2i(x, y);
+}
+
+template<typename Cell>
+void World<Cell>::modify_world(std::vector<Cell>& _alive_cells, sf::Event& _event)
+{
+	auto cell_size_in_px = world_size.pixel_size;
+	
+	if (sf::Event::MouseButtonPressed == _event.type)
+	{
+		auto mouse_pos = sf::Vector2f(_event.mouseButton.x, _event.mouseButton.y);
+		auto target_cell = find_corresponding_cell(mouse_pos, cell_size_in_px);
+
+		switch (_event.mouseButton.button)
+		{
+		case sf::Mouse::Button::Left:
+			{
+			_alive_cells.emplace_back(Cell(target_cell.x,target_cell.y,true));
+			break;
+			}
+		case sf::Mouse::Button::Right:
+		{
+			/*_alive_cells.erase(std::remove(_alive_cells.begin(), _alive_cells.end(), [&target_cell](Cell _cell)
+				{
+					if (_cell.x == target_cell.x && _cell.y == target_cell.y)
+					{
+						return true;
+					};
+				}));*/
+			break;
+		}
+		default:
+			return;
+
+		}
+	}
+	
 }

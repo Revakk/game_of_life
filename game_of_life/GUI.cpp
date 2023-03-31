@@ -23,13 +23,8 @@ void GUI::check_hovered_items(int _mouse_pos_x, int _mouse_pos_y)
 
 void GUI::update(const sf::Event& _event)
 {
-	for (auto& drawable_object : drawable_objects_)
+	/*for (auto& drawable_object : drawable_objects_)
 	{
 		drawable_object->update();
-	}
-}
-
-void GUI::update(const sf::Event& _event)
-{
-	
+	}*/
 }
