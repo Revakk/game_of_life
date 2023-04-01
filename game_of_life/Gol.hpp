@@ -142,17 +142,17 @@ void update(T& _world,std::vector<Cell>& _vec,bool _simmulating) {
 				//_world.cells[cell.x][cell.y].is_alive = false;
 			}
 		}
+		_vec = next_iter_check;
 	}
 	else
 	{
 		cells_to_change = _vec;
+		
 	}
 
 	for (auto& cell : cells_to_change)
 	{
 		_world.cells[cell.x][cell.y].is_alive = cell.is_alive;
 	}
-
-	_vec = next_iter_check;
 
 }

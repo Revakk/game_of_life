@@ -1,14 +1,22 @@
 #pragma once
 #include <map>
 
-struct mouse_world_event
+enum class MouseBTN
 {
-	sf::Vector2f last_pos;
-	bool left_click;
-	bool right_click;
+	NONE,
+	LEFT_CLICK,
+	RIGHT_CLICK,
+	MIDDLE_CLICK
 };
 
-void update_mouse_event(mouse_world_event& _last_event,sf::Event& _current_mouse_event)
+struct MouseWorldEvent
+{
+	sf::Vector2f last_pos;
+	MouseBTN click = MouseBTN::NONE;
+	bool holding = false;
+};
+
+void update_mouse_event(MouseWorldEvent& _last_event,sf::Event& _current_mouse_event)
 {
 	if (sf::Event::MouseMoved == _current_mouse_event.type)
 	{
@@ -36,6 +44,7 @@ struct World {
 	auto get_bounds();
 	std::vector<Cell> initialize_cells();
 	void modify_world(std::vector<Cell>& _world,sf::Event& _event);
+	MouseWorldEvent mouse_event;
 };
 
 template<typename Cell>
@@ -133,33 +142,64 @@ void World<Cell>::modify_world(std::vector<Cell>& _alive_cells, sf::Event& _even
 {
 	auto cell_size_in_px = world_size.pixel_size;
 	
-	if (sf::Event::MouseButtonPressed == _event.type)
+	//bool mouse_b_hold = false;
+
+	auto mouse_pos = sf::Vector2f(_event.mouseButton.x, _event.mouseButton.y);
+	
+	if (sf::Event::MouseMoved == _event.type)
 	{
-		auto mouse_pos = sf::Vector2f(_event.mouseButton.x, _event.mouseButton.y);
-		auto target_cell = find_corresponding_cell(mouse_pos, cell_size_in_px);
+		std::cout << _event.mouseMove.x << ',' << _event.mouseMove.y << '\n';
+		mouse_pos = sf::Vector2f(_event.mouseMove.x, _event.mouseMove.y);;
+	}
+
+
+	if (sf::Event::MouseButtonPressed == _event.type || mouse_event.holding)
+	{
+		mouse_event.holding = true;
+		
+
+		auto target_cell_pos = find_corresponding_cell(mouse_pos, cell_size_in_px);
+		Cell target_cell{ target_cell_pos.x, target_cell_pos.y, false };
+
 
 		switch (_event.mouseButton.button)
 		{
 		case sf::Mouse::Button::Left:
 			{
+			mouse_event.click = MouseBTN::LEFT_CLICK;
+			std::cout << "emplacing" << '\n';
 			_alive_cells.emplace_back(Cell(target_cell.x,target_cell.y,true));
 			break;
 			}
 		case sf::Mouse::Button::Right:
 		{
-			/*_alive_cells.erase(std::remove(_alive_cells.begin(), _alive_cells.end(), [&target_cell](Cell _cell)
+			mouse_event.click = MouseBTN::RIGHT_CLICK;
+			_alive_cells.erase(std::remove_if(_alive_cells.begin(), _alive_cells.end(), [this,&target_cell](const Cell& _cell)
 				{
-					if (_cell.x == target_cell.x && _cell.y == target_cell.y)
+					std::cout << "Target cell: " << target_cell.x << ',' << target_cell.y << 
+					" Cell:" << _cell.x << ',' << _cell.y <<'\n';
+					if (target_cell == _cell)
 					{
+						cells[target_cell.x][target_cell.y].is_alive = false;
 						return true;
-					};
-				}));*/
+					}
+					else 
+					{
+						return false;
+					}
+					
+				}),_alive_cells.end());
 			break;
 		}
 		default:
 			return;
 
 		}
+	}
+	if (sf::Event::MouseButtonReleased == _event.type)
+	{
+		mouse_event.holding = false;
+		mouse_event.click = MouseBTN::NONE;
 	}
 	
 }
