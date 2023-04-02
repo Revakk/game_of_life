@@ -107,7 +107,7 @@ void update(T& _world,std::vector<Cell>& _vec,bool _simmulating) {
 			int alive_neighbours_count = check_neighbours(cell, _world,neighbouring_cells,true);
 			if (state_from_neighbours_count(alive_neighbours_count,cell.is_alive) == cell_state::ALIVE)
 			{
-				next_iter_check.insert(cell);
+				next_iter_check.insert(Cell(cell.x,cell.y,true));
 				Cell cell_to_change = _world.cells[cell.x][cell.y];
 				cell_to_change.is_alive = true;
 				cells_to_change.emplace_back(cell_to_change);
@@ -126,7 +126,7 @@ void update(T& _world,std::vector<Cell>& _vec,bool _simmulating) {
 			int alive_neighbours_count = check_neighbours(cell, _world, neighbouring_cells,false);
 			if (state_from_neighbours_count(alive_neighbours_count, cell.is_alive) == cell_state::ALIVE)
 			{
-				next_iter_check.insert(cell);
+				next_iter_check.insert(Cell(cell.x, cell.y, true));
 				Cell cell_to_change = _world.cells[cell.x][cell.y];
 				cell_to_change.is_alive = true;
 				cells_to_change.emplace_back(cell_to_change);
