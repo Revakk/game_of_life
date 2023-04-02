@@ -38,7 +38,7 @@ struct WorldSize {
 
 template<typename Cell>
 struct World {
-	WorldSize world_size{ 20,20,25 };
+	WorldSize world_size{ 50,50,20 };
 	std::map<size_t,std::map<size_t,Cell>> cells;
 
 	auto get_bounds() const;
