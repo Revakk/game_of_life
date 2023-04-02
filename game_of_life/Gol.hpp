@@ -2,6 +2,8 @@
 #include <vector>
 #include "Cell.hpp"
 #include <iostream>
+#include <SFML/Graphics.hpp>
+#include <unordered_set>
 
 bool state_in_bounds(const std::pair<int, int>& _state, size_t _max_width, size_t _max_height)
 {
@@ -48,7 +50,7 @@ cell_state state_from_neighbours_count(int _num_alive_neighbours,bool _is_alive)
 }
 
 template<typename T, typename Cell>
-int check_neighbours(Cell _cell, T& _world, std::vector<Cell>& _neighbouring_cells) {
+int check_neighbours(Cell _cell, T& _world, std::unordered_set<Cell>& _neighbouring_cells, bool _push_to_vector) {
 	std::vector<std::pair<int, int>> states = {
 		{-1,-1},
 		{-1,0},
@@ -67,7 +69,6 @@ int check_neighbours(Cell _cell, T& _world, std::vector<Cell>& _neighbouring_cel
 	for (const auto& state : states) {
 		std::pair<int, int> current_state{ _cell.x + state.first, _cell.y + state.second };//std::make_pair<int,int>(_cell.x + state.first, _cell.y + state.second);
 
-		
 		//std::cout << current_state.first << ',' << current_state.second << '\n';
 
 		if (state_in_bounds(current_state, w, h)) {
@@ -78,11 +79,8 @@ int check_neighbours(Cell _cell, T& _world, std::vector<Cell>& _neighbouring_cel
 			}
 			else
 			{
-				if (_cell.is_alive)
-				{
-					_neighbouring_cells.emplace_back(std::move(Cell(current_state.first, current_state.second, false)));
-					//std::cout << "This neigbour is NOT alive" << '\n';
-				}	
+				//std::cout << "This neigbour is NOT alive" << '\n';
+				_neighbouring_cells.insert(Cell(current_state.first, current_state.second, false));	
 			}
 		}
 	}
@@ -95,9 +93,9 @@ int check_neighbours(Cell _cell, T& _world, std::vector<Cell>& _neighbouring_cel
 
 template<typename T,typename Cell>
 void update(T& _world,std::vector<Cell>& _vec,bool _simmulating) {
-	std::vector<Cell> next_iter_check{};
+	std::unordered_set<Cell> next_iter_check{};
 	std::vector<Cell> cells_to_change{};
-	std::vector<Cell> neighbouring_cells{};
+	std::unordered_set<Cell> neighbouring_cells{};
 
 	//neighbouring_cells.reserve(_vec.size() * 8);
 	next_iter_check.reserve(_vec.size());
@@ -105,11 +103,11 @@ void update(T& _world,std::vector<Cell>& _vec,bool _simmulating) {
 	
 	if (_simmulating)
 	{
-		for (auto cell : _vec) {
-			int alive_neighbours_count = check_neighbours(cell, _world,neighbouring_cells);
+		for (const auto& cell : _vec) {
+			int alive_neighbours_count = check_neighbours(cell, _world,neighbouring_cells,true);
 			if (state_from_neighbours_count(alive_neighbours_count,cell.is_alive) == cell_state::ALIVE)
 			{
-				next_iter_check.emplace_back(cell);
+				next_iter_check.insert(cell);
 				Cell cell_to_change = _world.cells[cell.x][cell.y];
 				cell_to_change.is_alive = true;
 				cells_to_change.emplace_back(cell_to_change);
@@ -124,25 +122,18 @@ void update(T& _world,std::vector<Cell>& _vec,bool _simmulating) {
 			}
 		}
 
-		for (auto cell : neighbouring_cells) {
-			int alive_neighbours_count = check_neighbours(cell, _world, neighbouring_cells);
+		for (const auto& cell : neighbouring_cells) {
+			int alive_neighbours_count = check_neighbours(cell, _world, neighbouring_cells,false);
 			if (state_from_neighbours_count(alive_neighbours_count, cell.is_alive) == cell_state::ALIVE)
 			{
-				next_iter_check.emplace_back(cell);
+				next_iter_check.insert(cell);
 				Cell cell_to_change = _world.cells[cell.x][cell.y];
 				cell_to_change.is_alive = true;
 				cells_to_change.emplace_back(cell_to_change);
-				//_world.cells[cell.x][cell.y].is_alive = true;
-			}
-			else
-			{
-				Cell cell_to_change = _world.cells[cell.x][cell.y];
-				cell_to_change.is_alive = false;
-				cells_to_change.emplace_back(cell_to_change);
-				//_world.cells[cell.x][cell.y].is_alive = false;
 			}
 		}
-		_vec = next_iter_check;
+		//_vec = next_iter_check;
+		_vec = std::vector<Cell>(next_iter_check.begin(), next_iter_check.end());
 	}
 	else
 	{

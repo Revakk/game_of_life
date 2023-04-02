@@ -10,7 +10,7 @@
 #include "GUI.hpp"
 
 template<typename T>
-void render(T& _render_target,sf::RenderWindow& _window)
+void render(const T& _render_target,sf::RenderWindow& _window)
 {
 	auto [w, h, ps] = _render_target.get_bounds();
 
@@ -20,8 +20,10 @@ void render(T& _render_target,sf::RenderWindow& _window)
 			{
 				cell.is_alive = true;
 			}*/
+			size_t cell_size = _render_target.world_size.pixel_size;
 			sf::RectangleShape rectangle(sf::Vector2f(9, 9));
-			rectangle.setPosition(sf::Vector2f((o_map_id * 10), (i_map_id * 10)));
+			rectangle.setPosition(sf::Vector2f((o_map_id * cell_size), (i_map_id * cell_size)));
+			rectangle.setSize(sf::Vector2f(cell_size, cell_size));
 			rectangle.setOutlineThickness(1.0f);
 			rectangle.setOutlineColor(sf::Color::Color(127,127,127,255));
 			//std::cout << rectangle.getPosition().x << ',' << rectangle.getPosition().y << '\n';

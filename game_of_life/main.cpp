@@ -4,9 +4,6 @@
 #include "Button.hpp"
 #include <variant>
 
-
-
-
 int main()
 {
 	World<Cell> world;
@@ -19,7 +16,7 @@ int main()
 
 	Button start_button("Start", sf::Vector2f(custom_width - 40, 20), sf::Vector2f(35, 15),true);
 	
-	start_button.set_callback([]() {std::cout << "Clicked from the callback function" << '\n'; });
+	start_button.set_callback([&simulation_running]() { simulation_running = !simulation_running; });
 
 	
 	sf::RenderWindow window(sf::VideoMode(custom_width, custom_height), "Game of lajf");
@@ -49,12 +46,14 @@ int main()
 		
 		render(world,window);
 		//gui.draw_gui();
-		
-		
-		
+ 
 		start_button.draw(window);
 		window.display();
-		//std::this_thread::sleep_for(std::chrono::duration<int>(1));
+		if (simulation_running)
+		{
+			std::this_thread::sleep_for(std::chrono::duration<float>(1.5f));
+		}
+		
 		
 	}
 	

@@ -38,17 +38,17 @@ struct WorldSize {
 
 template<typename Cell>
 struct World {
-	WorldSize world_size{ 50,50,10 };
+	WorldSize world_size{ 20,20,25 };
 	std::map<size_t,std::map<size_t,Cell>> cells;
 
-	auto get_bounds();
+	auto get_bounds() const;
 	std::vector<Cell> initialize_cells();
 	void modify_world(std::vector<Cell>& _world,sf::Event& _event);
 	MouseWorldEvent mouse_event;
 };
 
 template<typename Cell>
-auto World<Cell>::get_bounds() {
+auto World<Cell>::get_bounds() const {
 	return std::make_tuple(world_size.width, world_size.height, world_size.pixel_size);
 }
 
@@ -148,7 +148,7 @@ void World<Cell>::modify_world(std::vector<Cell>& _alive_cells, sf::Event& _even
 	
 	if (sf::Event::MouseMoved == _event.type)
 	{
-		std::cout << _event.mouseMove.x << ',' << _event.mouseMove.y << '\n';
+		//std::cout << _event.mouseMove.x << ',' << _event.mouseMove.y << '\n';
 		mouse_pos = sf::Vector2f(_event.mouseMove.x, _event.mouseMove.y);;
 	}
 
@@ -162,22 +162,16 @@ void World<Cell>::modify_world(std::vector<Cell>& _alive_cells, sf::Event& _even
 		Cell target_cell{ target_cell_pos.x, target_cell_pos.y, false };
 
 
-		switch (_event.mouseButton.button)
-		{
-		case sf::Mouse::Button::Left:
+		if(_event.mouseButton.button == sf::Mouse::Button::Left || mouse_event.click == MouseBTN::LEFT_CLICK)
 			{
 			mouse_event.click = MouseBTN::LEFT_CLICK;
-			std::cout << "emplacing" << '\n';
 			_alive_cells.emplace_back(Cell(target_cell.x,target_cell.y,true));
-			break;
 			}
-		case sf::Mouse::Button::Right:
+		if (_event.mouseButton.button ==  sf::Mouse::Button::Right || mouse_event.click == MouseBTN::RIGHT_CLICK)
 		{
 			mouse_event.click = MouseBTN::RIGHT_CLICK;
 			_alive_cells.erase(std::remove_if(_alive_cells.begin(), _alive_cells.end(), [this,&target_cell](const Cell& _cell)
 				{
-					std::cout << "Target cell: " << target_cell.x << ',' << target_cell.y << 
-					" Cell:" << _cell.x << ',' << _cell.y <<'\n';
 					if (target_cell == _cell)
 					{
 						cells[target_cell.x][target_cell.y].is_alive = false;
@@ -189,11 +183,6 @@ void World<Cell>::modify_world(std::vector<Cell>& _alive_cells, sf::Event& _even
 					}
 					
 				}),_alive_cells.end());
-			break;
-		}
-		default:
-			return;
-
 		}
 	}
 	if (sf::Event::MouseButtonReleased == _event.type)
@@ -201,5 +190,4 @@ void World<Cell>::modify_world(std::vector<Cell>& _alive_cells, sf::Event& _even
 		mouse_event.holding = false;
 		mouse_event.click = MouseBTN::NONE;
 	}
-	
 }
